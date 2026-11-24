@@ -120,7 +120,7 @@
     /* Pantalla de Inicio */
     #screen-menu {
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       gap: 14px;
       background:
         radial-gradient(circle at top right, rgba(166, 58, 36, 0.12), transparent 55%),
@@ -208,9 +208,6 @@
       .menu-buttons {
         grid-template-columns: 1fr 1fr;
       }
-      .menu-buttons .btn-full {
-        grid-column: 1 / -1;
-      }
     }
 
     .btn-primary, .btn-secondary, .btn-outline {
@@ -257,18 +254,6 @@
       margin-top: 3px;
     }
 
-    .student-banner {
-      width: 100%;
-      max-width: 760px;
-      background: #e6d6bd;
-      border: 1.5px dashed #a89274;
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-size: 0.84rem;
-      text-align: center;
-      color: #463a33;
-    }
-
     /* Pantalla de Juego (Canvas 2D sin scroll accidental) */
     #screen-game {
       padding: 0;
@@ -283,7 +268,7 @@
       touch-action: none;
     }
 
-    /* Modales (Créditos, Tarjeta Histórica, Resumen) */
+    /* Modales (Tarjeta Histórica, Resumen) */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -333,31 +318,6 @@
       margin: 0 0 12px 0;
       font-size: 0.95rem;
       line-height: 1.5;
-    }
-
-    .form-group {
-      margin-bottom: 12px;
-      text-align: left;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.84rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-      color: var(--charcoal);
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 2px solid var(--border);
-      font-size: 0.95rem;
-      background: #fff;
-      color: var(--charcoal);
-      user-select: text;
-      -webkit-user-select: text;
     }
 
     .stats-grid {
@@ -446,47 +406,14 @@
             🎓 Modo Clase / Práctica
             <span class="btn-sub">Sin reloj ni derrota; ideal para probar en clase</span>
           </button>
-          <button id="btn-open-credits" class="btn-outline btn-full">
-            📋 Créditos y Datos del Proyecto Escolar
-            <span class="btn-sub">Editar nombre del alumno, curso/división y escuela</span>
-          </button>
         </div>
       </section>
-
-      <div id="student-banner" class="student-banner">
-        Proyecto Escolar • Tocá "Créditos y Datos del Proyecto" para personalizar los datos del alumno.
-      </div>
     </main>
 
     <!-- PANTALLA DE JUEGO 2D -->
     <section id="screen-game" class="screen">
       <canvas id="gameCanvas"></canvas>
     </section>
-
-    <!-- MODAL CRÉDITOS Y DATOS DEL PROYECTO -->
-    <div id="modal-credits" class="modal-backdrop">
-      <div class="modal-card">
-        <span class="modal-tag">Ficha Escolar</span>
-        <h2>Créditos y Datos del Proyecto</h2>
-        <p>Completá los datos para mostrar en la presentación del trabajo práctico sobre la cultura Diaguita:</p>
-        <div class="form-group">
-          <label for="input-student">Nombre del alumno / equipo:</label>
-          <input id="input-student" type="text" placeholder="Ej: Dylan Alexander Arias Vega" maxlength="60" />
-        </div>
-        <div class="form-group">
-          <label for="input-course">Curso y división:</label>
-          <input id="input-course" type="text" placeholder="Ej: 1° Año 'B'" maxlength="40" />
-        </div>
-        <div class="form-group">
-          <label for="input-school">Escuela / Institución:</label>
-          <input id="input-school" type="text" placeholder="Ej: Colegio Provincial N° 8 - La Rioja" maxlength="60" />
-        </div>
-        <div class="modal-actions">
-          <button id="btn-save-credits" class="btn-primary">Guardar Datos</button>
-          <button id="btn-close-credits" class="btn-outline">Cerrar</button>
-        </div>
-      </div>
-    </div>
 
     <!-- MODAL TARJETA HISTÓRICA -->
     <div id="modal-fact" class="modal-backdrop">
@@ -610,7 +537,6 @@
         }
       ];
 
-      // Banco de desafíos (alterna clasificación por Pigmento y clasificación por Forma/Uso)
       const CHALLENGES = [
         // --- RONDA TIPO PIGMENTOS ---
         {
@@ -763,7 +689,7 @@
       };
 
       // =========================================================
-      // 3. ESTADO DEL JUEGO Y PERSISTENCIA DE CRÉDITOS
+      // 3. ESTADO DEL JUEGO
       // =========================================================
       const state = {
         screen: 'menu',
@@ -778,9 +704,8 @@
         timeLeft: 14,
         paused: false,
         hintText: '',
-        feedback: null, // { text, color, timer }
+        feedback: null,
         factIndex: 0,
-        // Arrastrar pieza
         piece: {
           x: 0,
           y: 0,
@@ -796,30 +721,6 @@
         hoveredBinId: null,
         particles: []
       };
-
-      // Cargar datos escolares desde localStorage
-      const studentData = {
-        name: localStorage.getItem('diaguita_student') || '',
-        course: localStorage.getItem('diaguita_course') || '',
-        school: localStorage.getItem('diaguita_school') || ''
-      };
-
-      function updateStudentBanner() {
-        const banner = document.getElementById('student-banner');
-        const parts = [];
-        if (studentData.name) parts.push(`Alumno/a: <strong>${escapeHtml(studentData.name)}</strong>`);
-        if (studentData.course) parts.push(`Curso: <strong>${escapeHtml(studentData.course)}</strong>`);
-        if (studentData.school) parts.push(`Escuela: <strong>${escapeHtml(studentData.school)}</strong>`);
-        banner.innerHTML = parts.length
-          ? parts.join(' • ')
-          : 'Proyecto Escolar • Tocá "Créditos y Datos del Proyecto" para personalizar los datos del alumno.';
-      }
-
-      function escapeHtml(str) {
-        return str.replace(/[&<>"']/g, m => ({
-          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-        }[m]));
-      }
 
       // =========================================================
       // 4. NAVEGACIÓN Y CONTROLES UI
@@ -852,31 +753,6 @@
         showScreen('menu');
       });
 
-      // Modal Créditos
-      const modalCredits = document.getElementById('modal-credits');
-      document.getElementById('btn-open-credits').addEventListener('click', () => {
-        document.getElementById('input-student').value = studentData.name;
-        document.getElementById('input-course').value = studentData.course;
-        document.getElementById('input-school').value = studentData.school;
-        modalCredits.classList.add('active');
-      });
-
-      document.getElementById('btn-save-credits').addEventListener('click', () => {
-        studentData.name = document.getElementById('input-student').value.trim();
-        studentData.course = document.getElementById('input-course').value.trim();
-        studentData.school = document.getElementById('input-school').value.trim();
-        localStorage.setItem('diaguita_student', studentData.name);
-        localStorage.setItem('diaguita_course', studentData.course);
-        localStorage.setItem('diaguita_school', studentData.school);
-        updateStudentBanner();
-        modalCredits.classList.remove('active');
-        sound.pickup();
-      });
-
-      document.getElementById('btn-close-credits').addEventListener('click', () => {
-        modalCredits.classList.remove('active');
-      });
-
       // Modal Tarjeta Histórica
       const modalFact = document.getElementById('modal-fact');
       document.getElementById('btn-continue-fact').addEventListener('click', () => {
@@ -901,7 +777,6 @@
       });
 
       function closeAllModals() {
-        modalCredits.classList.remove('active');
         modalFact.classList.remove('active');
         modalSummary.classList.remove('active');
       }
@@ -975,7 +850,6 @@
         state.attempts++;
 
         if (binId === item.correctBin) {
-          // Acierto
           sound.success();
           state.hits++;
           const timeBonus = state.mode === 'challenge' ? Math.round(state.timeLeft * 10) : 50;
@@ -990,7 +864,6 @@
             return;
           }
 
-          // Mostrar tarjeta histórica cada 3 aciertos
           if (state.hits % 3 === 0) {
             prepareCurrentItem();
             setTimeout(() => showHistoricalCard(), 420);
@@ -998,15 +871,12 @@
             prepareCurrentItem();
           }
         } else {
-          // Error
           sound.error();
           if (state.mode === 'practice') {
-            // Modo Práctica: pista educativa sin cortar la partida
             state.hintText = '💡 Pista: ' + item.hint;
             state.feedback = { text: 'Intentá de nuevo con la pista', color: '#b85d19', timer: 1.5 };
             resetPieceToHome();
           } else {
-            // Modo Desafío: pierde 1 intento de horno
             state.lives--;
             state.hintText = '💡 ' + item.hint;
             state.feedback = { text: 'Pigmento/Categoría incorrecta', color: '#a63a24', timer: 1.4 };
@@ -1080,7 +950,6 @@
         const margin = Math.max(12, width * 0.03);
 
         if (isLandscape && width >= 680) {
-          // Estaciones a la derecha, mesa de trabajo a la izquierda
           const binAreaW = Math.min(280, width * 0.36);
           const binGap = 12;
           const availH = height - topHudH - margin * 2;
@@ -1094,11 +963,10 @@
             h: binH
           }));
 
-          state.piece.homeX = (binX) * 0.5;
+          state.piece.homeX = binX * 0.5;
           state.piece.homeY = topHudH + (height - topHudH) * 0.52;
           state.piece.radius = Math.min(88, Math.min(binX, availH) * 0.24);
         } else {
-          // Diseño vertical móvil: mesa arriba/centro, 3 estaciones grandes abajo
           const binH = Math.min(118, Math.max(88, height * 0.17));
           const binGap = 10;
           const totalW = width - margin * 2;
@@ -1125,18 +993,15 @@
         state.piece.dragging = false;
       }
 
-      // Dibujo procedural de la vasija diaguita
       function drawDiaguitaVessel(ctx, x, y, r, item) {
         ctx.save();
         ctx.translate(x, y);
 
-        // Sombra suave sobre la mesa del taller
         ctx.fillStyle = 'rgba(38, 34, 32, 0.18)';
         ctx.beginPath();
         ctx.ellipse(0, r * 0.72, r * 0.75, r * 0.18, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Colores según el ítem
         let baseFill = '#f3e6cc';
         let primaryStroke = '#262220';
         let accentFill = '#a63a24';
@@ -1154,7 +1019,6 @@
           primaryStroke = '#231f1e';
           accentFill = '#231f1e';
         } else {
-          // Tricolor clásico (Crema + Rojo + Negro)
           baseFill = '#f3e6cc';
           primaryStroke = '#231f1e';
           accentFill = '#a63a24';
@@ -1165,7 +1029,6 @@
         ctx.fillStyle = baseFill;
 
         if (item.shape === 'puco') {
-          // Cuenco abierto (Puco)
           ctx.beginPath();
           ctx.moveTo(-r * 0.85, -r * 0.22);
           ctx.bezierCurveTo(-r * 0.82, r * 0.55, -r * 0.35, r * 0.68, 0, r * 0.68);
@@ -1174,7 +1037,6 @@
           ctx.fill();
           ctx.stroke();
 
-          // Boca elíptica
           ctx.fillStyle = '#d9c29c';
           ctx.beginPath();
           ctx.ellipse(0, -r * 0.22, r * 0.85, r * 0.17, 0, 0, Math.PI * 2);
@@ -1183,8 +1045,6 @@
 
           drawMotifBand(ctx, 0, r * 0.22, r * 0.68, item.motif, primaryStroke, accentFill);
         } else if (item.shape === 'jarro') {
-          // Jarro Pato: cuerpo globular + pico + cabeza/cola + asa puente
-          // Asa puente
           ctx.strokeStyle = accentFill;
           ctx.lineWidth = 7;
           ctx.beginPath();
@@ -1195,7 +1055,6 @@
           ctx.strokeStyle = '#2b2420';
           ctx.lineWidth = 3;
 
-          // Cuerpo
           ctx.fillStyle = baseFill;
           ctx.beginPath();
           ctx.moveTo(-r * 0.78, 0);
@@ -1212,7 +1071,6 @@
           ctx.fill();
           ctx.stroke();
 
-          // Ojo estilizado en el extremo zoomorfo
           ctx.fillStyle = primaryStroke;
           ctx.beginPath();
           ctx.arc(r * 0.64, -r * 0.06, 4.5, 0, Math.PI * 2);
@@ -1220,8 +1078,6 @@
 
           drawMotifBand(ctx, 0, r * 0.28, r * 0.62, item.motif, primaryStroke, accentFill);
         } else {
-          // Urna ceremonial alta con asas laterales
-          // Asas
           ctx.strokeStyle = '#2b2420';
           ctx.lineWidth = 6;
           ctx.beginPath();
@@ -1231,7 +1087,6 @@
           ctx.arc(r * 0.62, r * 0.18, r * 0.18, -Math.PI * 0.5, Math.PI * 0.5);
           ctx.stroke();
 
-          // Silueta de urna
           ctx.lineWidth = 3.2;
           ctx.fillStyle = baseFill;
           ctx.beginPath();
@@ -1245,9 +1100,7 @@
           ctx.fill();
           ctx.stroke();
 
-          // Guarda superior en el cuello
           drawMotifBand(ctx, 0, -r * 0.5, r * 0.38, 'triangles', accentFill, primaryStroke);
-          // Guarda central en el cuerpo
           drawMotifBand(ctx, 0, r * 0.2, r * 0.54, item.motif, primaryStroke, accentFill);
         }
 
@@ -1260,7 +1113,6 @@
         ctx.fillStyle = fillCol;
         ctx.lineWidth = 2.6;
 
-        // Líneas límite de guarda
         ctx.beginPath();
         ctx.moveTo(cx - halfW, cy - 14);
         ctx.lineTo(cx + halfW, cy - 14);
@@ -1272,7 +1124,6 @@
         const segW = (halfW * 2) / steps;
 
         if (motif === 'steps') {
-          // Guarda escalonada diaguita
           ctx.beginPath();
           for (let i = 0; i < steps; i++) {
             const sx = cx - halfW + i * segW;
@@ -1284,7 +1135,6 @@
           }
           ctx.stroke();
         } else if (motif === 'serpent') {
-          // Serpiente ondulada (amaro)
           ctx.beginPath();
           ctx.moveTo(cx - halfW, cy);
           for (let i = 0; i < steps; i++) {
@@ -1294,7 +1144,6 @@
           }
           ctx.stroke();
         } else if (motif === 'triangles') {
-          // Triángulos rellenos
           for (let i = 0; i < steps; i++) {
             const sx = cx - halfW + i * segW;
             ctx.beginPath();
@@ -1305,7 +1154,6 @@
             ctx.fill();
           }
         } else if (motif === 'spiral') {
-          // Espirales geométricas
           for (let i = 0; i < steps; i++) {
             const mx = cx - halfW + (i + 0.5) * segW;
             ctx.beginPath();
@@ -1313,7 +1161,6 @@
             ctx.stroke();
           }
         } else {
-          // Puntos y ondas suaves
           for (let i = 0; i < steps; i++) {
             const mx = cx - halfW + (i + 0.5) * segW;
             ctx.beginPath();
@@ -1377,7 +1224,6 @@
           if (state.feedback.timer <= 0) state.feedback = null;
         }
 
-        // Partículas
         for (let i = state.particles.length - 1; i >= 0; i--) {
           const p = state.particles[i];
           p.x += p.vx * dt;
@@ -1391,18 +1237,15 @@
         const item = getCurrentItem();
         if (!item) return;
 
-        // Fondo textura taller de arcilla
         ctx.fillStyle = '#efe3cf';
         ctx.fillRect(0, 0, width, height);
 
-        // Guarda decorativa sutil en el fondo
         ctx.strokeStyle = 'rgba(166, 58, 36, 0.08)';
         ctx.lineWidth = 2;
         for (let gx = 0; gx < width; gx += 48) {
           ctx.strokeRect(gx + 6, 74, 36, 12);
         }
 
-        // HUD Superior dentro del canvas
         ctx.fillStyle = '#fbf5ea';
         ctx.fillRect(0, 0, width, 64);
         ctx.strokeStyle = '#cbb697';
@@ -1421,7 +1264,6 @@
         ctx.font = 'bold 15px system-ui, sans-serif';
         ctx.fillText(`Puntos: ${state.score}`, 14, 48);
 
-        // Indicador derecho: Vidas/Tiempo en Desafío o Etiqueta en Práctica
         ctx.textAlign = 'right';
         if (state.mode === 'challenge') {
           const hearts = '🔥'.repeat(Math.max(0, state.lives)) + '⚪'.repeat(Math.max(0, 3 - state.lives));
@@ -1429,7 +1271,6 @@
           ctx.font = 'bold 14px system-ui, sans-serif';
           ctx.fillText(`Hornos: ${hearts}`, width - 14, 24);
 
-          // Barra de tiempo
           const barW = Math.min(140, width * 0.34);
           const barX = width - 14 - barW;
           ctx.fillStyle = '#dfd0b8';
@@ -1449,13 +1290,11 @@
           ctx.fillText('Sin límite de tiempo', width - 14, 46);
         }
 
-        // Consigna actual
         ctx.textAlign = 'center';
         ctx.fillStyle = '#7d2817';
         ctx.font = 'bold 15px system-ui, sans-serif';
         ctx.fillText(item.prompt, state.piece.homeX, 90);
 
-        // Mesa circular del alfarero
         ctx.fillStyle = '#e2d1b5';
         ctx.beginPath();
         ctx.arc(state.piece.homeX, state.piece.homeY, state.piece.radius * 1.15, 0, Math.PI * 2);
@@ -1464,7 +1303,6 @@
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Estaciones / Recipientes destino
         const bins = BINS_BY_TYPE[item.roundType];
         bins.forEach((bin, idx) => {
           const rect = state.binsRects[idx];
@@ -1500,7 +1338,6 @@
           ctx.restore();
         });
 
-        // Etiqueta descriptiva de la pieza (debajo de la mesa)
         const labelY = state.piece.homeY + state.piece.radius * 1.25;
         ctx.textAlign = 'center';
         ctx.fillStyle = '#262220';
@@ -1511,7 +1348,6 @@
         ctx.font = '12.5px system-ui, sans-serif';
         ctx.fillText(item.itemSub, state.piece.homeX, labelY + 18);
 
-        // Pista educativa (si hubo error en Modo Práctica o Desafío)
         if (state.hintText) {
           ctx.fillStyle = '#fff5e4';
           const boxW = Math.min(width - 28, 460);
@@ -1528,17 +1364,14 @@
           ctx.fillText(state.hintText, state.piece.homeX, boxY + 21, boxW - 16);
         }
 
-        // Mensaje flotante de retroalimentación
         if (state.feedback) {
           ctx.fillStyle = state.feedback.color;
           ctx.font = 'bold 15px system-ui, sans-serif';
           ctx.fillText(state.feedback.text, state.piece.homeX, 112);
         }
 
-        // Dibujar pieza interactiva encima de todo
         drawDiaguitaVessel(ctx, state.piece.x, state.piece.y, state.piece.radius, item);
 
-        // Dibujar partículas
         state.particles.forEach(p => {
           ctx.fillStyle = p.color;
           ctx.globalAlpha = Math.max(0, p.life / 0.65);
@@ -1579,7 +1412,6 @@
         canvas.setPointerCapture(e.pointerId);
         const pos = getPointerPos(e);
 
-        // 1. ¿Tocó directamente la vasija para arrastrarla?
         const dist = Math.hypot(pos.x - state.piece.x, pos.y - state.piece.y);
         if (dist <= state.piece.radius * 1.15) {
           state.piece.dragging = true;
@@ -1589,7 +1421,6 @@
           return;
         }
 
-        // 2. ¿Tocó directamente una de las estaciones destino? (Accesibilidad rápida táctil/mouse)
         const clickedBin = findBinAt(pos.x, pos.y);
         if (clickedBin) {
           evaluateChoice(clickedBin.id);
@@ -1626,8 +1457,6 @@
       canvas.addEventListener('pointerup', handlePointerUp);
       canvas.addEventListener('pointercancel', handlePointerUp);
 
-      // Inicialización
-      updateStudentBanner();
       requestAnimationFrame(gameLoop);
     })();
   </script>
