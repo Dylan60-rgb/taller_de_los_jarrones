@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>El Taller de los Colores - Cerámica Diaguita</title>
+  <style>
+    :root {
+      --bg-clay: #efe3cf;
+      --bg-panel: #fbf5ea;
+      --terracotta: #a63a24;
+      --terracotta-dark: #7d2817;
+      --ochre: #c87d32;
+      --cream-engobe: #f3e6cc;
+      --charcoal: #262220;
+      --ink: #382e29;
+      --border: #cbb697;
+      --success: #2e6f40;
+      --warning: #b85d19;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-clay);
+      color: var(--ink);
+      font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+    }
+
+    #app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Barra superior fija */
+    header {
+      height: 54px;
+      background: var(--charcoal);
+      color: var(--cream-engobe);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      border-bottom: 3px solid var(--terracotta);
+      z-index: 20;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-badge {
+      background: var(--terracotta);
+      color: #fff;
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: #3b3532;
+      color: var(--cream-engobe);
+      border: 1px solid #59504b;
+      border-radius: 10px;
+      padding: 6px 11px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* Contenedor de pantallas */
+    .screen {
+      position: absolute;
+      top: 54px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 14px;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* Pantalla de Inicio */
+    #screen-menu {
+      align-items: center;
+      justify-content: flex-start;
+      gap: 14px;
+      background:
+        radial-gradient(circle at top right, rgba(166, 58, 36, 0.12), transparent 55%),
+        radial-gradient(circle at bottom left, rgba(200, 125, 50, 0.14), transparent 55%),
+        var(--bg-clay);
+    }
+
+    .hero-card {
+      width: 100%;
+      max-width: 760px;
+      background: var(--bg-panel);
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 8px 22px rgba(38, 34, 32, 0.08);
+    }
+
+    .hero-card h1 {
+      margin: 0 0 6px 0;
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      color: var(--terracotta);
+      line-height: 1.15;
+    }
+
+    .hero-subtitle {
+      margin: 0 0 14px 0;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      color: #4f423b;
+    }
+
+    .pigment-legend {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .pigment-chip {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 4px;
+    }
+
+    .swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--charcoal);
+    }
+
+    .pigment-chip strong {
+      font-size: 0.82rem;
+      color: var(--charcoal);
+    }
+
+    .pigment-chip span {
+      font-size: 0.72rem;
+      color: #63554d;
+    }
+
+    .shapes-summary {
+      background: #f4ead8;
+      border-left: 4px solid var(--ochre);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+
+    .menu-buttons {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .menu-buttons {
+        grid-template-columns: 1fr 1fr;
+      }
+      .menu-buttons .btn-full {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .btn-primary, .btn-secondary, .btn-outline {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: transform 0.1s ease;
+    }
+
+    .btn-primary:active, .btn-secondary:active, .btn-outline:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--terracotta);
+      color: #fff;
+      box-shadow: 0 4px 0 var(--terracotta-dark);
+    }
+
+    .btn-secondary {
+      background: var(--ochre);
+      color: #fff;
+      box-shadow: 0 4px 0 #995c20;
+    }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--charcoal);
+      border: 2px solid var(--border);
+    }
+
+    .btn-sub {
+      font-size: 0.76rem;
+      font-weight: 500;
+      opacity: 0.92;
+      margin-top: 3px;
+    }
+
+    .student-banner {
+      width: 100%;
+      max-width: 760px;
+      background: #e6d6bd;
+      border: 1.5px dashed #a89274;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.84rem;
+      text-align: center;
+      color: #463a33;
+    }
+
+    /* Pantalla de Juego (Canvas 2D sin scroll accidental) */
+    #screen-game {
+      padding: 0;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    #gameCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+    }
+
+    /* Modales (Créditos, Tarjeta Histórica, Resumen) */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(24, 20, 18, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: var(--bg-panel);
+      border: 3px solid var(--terracotta);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+    }
+
+    .modal-tag {
+      display: inline-block;
+      background: var(--ochre);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .modal-card h2 {
+      margin: 0 0 10px 0;
+      color: var(--terracotta);
+      font-size: 1.35rem;
+    }
+
+    .modal-card p {
+      margin: 0 0 12px 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--charcoal);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      font-size: 0.95rem;
+      background: #fff;
+      color: var(--charcoal);
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .stat-box {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 6px;
+      text-align: center;
+    }
+
+    .stat-box strong {
+      display: block;
+      font-size: 1.35rem;
+      color: var(--terracotta);
+    }
+
+    .stat-box span {
+      font-size: 0.76rem;
+      color: #5e5149;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <div class="brand-title">
+        <span>🏺 El Taller de los Colores</span>
+        <span class="brand-badge">Cultura Diaguita</span>
+      </div>
+      <div class="header-actions">
+        <button id="btn-home" class="icon-btn" style="display:none;" title="Volver al inicio">🏠 Inicio</button>
+        <button id="btn-sound" class="icon-btn" title="Activar o silenciar sonido">🔊 Sonido</button>
+      </div>
+    </header>
+
+    <!-- PANTALLA DE INICIO -->
+    <main id="screen-menu" class="screen active">
+      <section class="hero-card">
+        <h1>El Taller de los Colores</h1>
+        <p class="hero-subtitle">
+          Explorá el arte alfarero de los pueblos <strong>Diaguitas</strong> del noroeste argentino. Clasificá vasijas, pigmentos naturales y diseños geométricos antes de llevar las piezas al horno de barro.
+        </p>
+
+        <div class="pigment-legend">
+          <div class="pigment-chip">
+            <div class="swatch" style="background:#f3e6cc;"></div>
+            <strong>Crema / Engobe</strong>
+            <span>Arcilla fina clara y caolín</span>
+          </div>
+          <div class="pigment-chip">
+            <div class="swatch" style="background:#a63a24;"></div>
+            <strong>Rojo Óxido</strong>
+            <span>Mineral de hierro (hematita)</span>
+          </div>
+          <div class="pigment-chip">
+            <div class="swatch" style="background:#262220;"></div>
+            <strong>Negro Mineral</strong>
+            <span>Óxido de manganeso y carbón</span>
+          </div>
+        </div>
+
+        <div class="shapes-summary">
+          <strong>Formas tradicionales:</strong> <b>Puco</b> (cuenco abierto para alimentos y ofrendas), <b>Jarro Pato</b> (vasija asimétrica con asa puente y rasgos zoomorfos) y <b>Urna</b> (gran vasija ceremonial decorada con guardas escalonadas y serpientes).
+        </div>
+
+        <div class="menu-buttons">
+          <button id="btn-start-challenge" class="btn-primary">
+            🔥 Jugar Modo Desafío
+            <span class="btn-sub">Con tiempo por pieza y puntaje máximo</span>
+          </button>
+          <button id="btn-start-practice" class="btn-secondary">
+            🎓 Modo Clase / Práctica
+            <span class="btn-sub">Sin reloj ni derrota; ideal para probar en clase</span>
+          </button>
+          <button id="btn-open-credits" class="btn-outline btn-full">
+            📋 Créditos y Datos del Proyecto Escolar
+            <span class="btn-sub">Editar nombre del alumno, curso/división y escuela</span>
+          </button>
+        </div>
+      </section>
+
+      <div id="student-banner" class="student-banner">
+        Proyecto Escolar • Tocá "Créditos y Datos del Proyecto" para personalizar los datos del alumno.
+      </div>
+    </main>
+
+    <!-- PANTALLA DE JUEGO 2D -->
+    <section id="screen-game" class="screen">
+      <canvas id="gameCanvas"></canvas>
+    </section>
+
+    <!-- MODAL CRÉDITOS Y DATOS DEL PROYECTO -->
+    <div id="modal-credits" class="modal-backdrop">
+      <div class="modal-card">
+        <span class="modal-tag">Ficha Escolar</span>
+        <h2>Créditos y Datos del Proyecto</h2>
+        <p>Completá los datos para mostrar en la presentación del trabajo práctico sobre la cultura Diaguita:</p>
+        <div class="form-group">
+          <label for="input-student">Nombre del alumno / equipo:</label>
+          <input id="input-student" type="text" placeholder="Ej: Dylan Alexander Arias Vega" maxlength="60" />
+        </div>
+        <div class="form-group">
+          <label for="input-course">Curso y división:</label>
+          <input id="input-course" type="text" placeholder="Ej: 1° Año 'B'" maxlength="40" />
+        </div>
+        <div class="form-group">
+          <label for="input-school">Escuela / Institución:</label>
+          <input id="input-school" type="text" placeholder="Ej: Colegio Provincial N° 8 - La Rioja" maxlength="60" />
+        </div>
+        <div class="modal-actions">
+          <button id="btn-save-credits" class="btn-primary">Guardar Datos</button>
+          <button id="btn-close-credits" class="btn-outline">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL TARJETA HISTÓRICA -->
+    <div id="modal-fact" class="modal-backdrop">
+      <div class="modal-card">
+        <span id="fact-tag" class="modal-tag">Saberes Diaguitas</span>
+        <h2 id="fact-title">Los colores de la tierra</h2>
+        <p id="fact-body"></p>
+        <div class="modal-actions">
+          <button id="btn-continue-fact" class="btn-primary">Continuar en el Taller ➜</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL RESUMEN FINAL -->
+    <div id="modal-summary" class="modal-backdrop">
+      <div class="modal-card">
+        <span id="summary-tag" class="modal-tag">Jornada Completada</span>
+        <h2 id="summary-title">¡Gran trabajo en el taller!</h2>
+        <p id="summary-text"></p>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <strong id="stat-hits">0</strong>
+            <span>Aciertos</span>
+          </div>
+          <div class="stat-box">
+            <strong id="stat-score">0</strong>
+            <span>Puntaje</span>
+          </div>
+          <div class="stat-box">
+            <strong id="stat-accuracy">100%</strong>
+            <span>Precisión</span>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button id="btn-restart-same" class="btn-primary">🔄 Volver a Jugar este Modo</button>
+          <button id="btn-switch-mode" class="btn-secondary">🔀 Cambiar de Modo</button>
+          <button id="btn-summary-home" class="btn-outline">🏠 Volver al Inicio</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      // =========================================================
+      // 1. AUDIO SINTÉTICO (WEB AUDIO API SIN ARCHIVOS EXTERNOS)
+      // =========================================================
+      class SoundEngine {
+        constructor() {
+          this.enabled = true;
+          this.ctx = null;
+        }
+        init() {
+          if (!this.ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) this.ctx = new AudioCtx();
+          }
+          if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume();
+          }
+        }
+        playTone(freq, type, duration, gainVal = 0.14, delay = 0) {
+          if (!this.enabled) return;
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime + delay;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(gainVal, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + duration);
+        }
+        pickup() {
+          this.playTone(340, 'triangle', 0.09, 0.12);
+        }
+        success() {
+          this.playTone(523.25, 'sine', 0.14, 0.15, 0);
+          this.playTone(659.25, 'sine', 0.18, 0.15, 0.08);
+          this.playTone(783.99, 'triangle', 0.24, 0.14, 0.16);
+        }
+        error() {
+          this.playTone(210, 'sawtooth', 0.18, 0.12, 0);
+          this.playTone(165, 'sawtooth', 0.24, 0.12, 0.11);
+        }
+        fact() {
+          this.playTone(440, 'triangle', 0.15, 0.12, 0);
+          this.playTone(554.37, 'triangle', 0.22, 0.12, 0.1);
+        }
+      }
+
+      const sound = new SoundEngine();
+
+      // =========================================================
+      // 2. DATOS EDUCATIVOS Y CONTENIDO DIAGUITA
+      // =========================================================
+      const HISTORICAL_CARDS = [
+        {
+          tag: 'Pigmentos Naturales',
+          title: '¿Cómo obtenían los tres colores clásicos?',
+          body: 'Los alfareros diaguitas molían minerales en morteros de piedra: usaban óxido de hierro (hematita) para lograr el rojo intenso, óxido de manganeso y carbón vegetal para el negro, y arcillas blancas (caolín) para el baño crema llamado "engobe".'
+        },
+        {
+          tag: 'Simbolismo y Geometría',
+          title: 'Guardas escalonadas y animales sagrados',
+          body: 'Sus diseños no eran simples adornos: las grecas escalonadas representaban los cerros y el agua de las acequias, mientras que la serpiente (amaro), el suri (ñandú) y el sapo simbolizaban el pedido de lluvias y fertilidad para los cultivos.'
+        },
+        {
+          tag: 'Formas y Usos',
+          title: 'Pucos, Jarros Pato y Urnas',
+          body: 'Cada forma cumplía una función social o ritual: el puco servía para compartir alimentos y bebidas como la aloja; el jarro pato se empleaba en ceremonias; y las grandes urnas pintadas funcionaban como recipientes funerarios.'
+        },
+        {
+          tag: 'Técnica Alfarera',
+          title: 'Modelado por chorizos y cocción',
+          body: 'Sin torno alfarero, levantaban las paredes superponiendo rollos de barro ("chorizos"), alisaban la superficie con piedras pulidoras y pintaban antes de hornear en pozos abiertos cubiertos con leña y guano.'
+        }
+      ];
+
+      // Banco de desafíos (alterna clasificación por Pigmento y clasificación por Forma/Uso)
+      const CHALLENGES = [
+        // --- RONDA TIPO PIGMENTOS ---
+        {
+          roundType: 'pigment',
+          prompt: 'Clasificá el pigmento según su origen y color',
+          itemTitle: 'Cuenco con baño de Caolín',
+          itemSub: 'Base clara alisada antes de pintar',
+          shape: 'puco',
+          motif: 'waves',
+          palette: 'cream',
+          correctBin: 'cream',
+          hint: 'El caolín es una arcilla blanca que produce el tono Crema / Engobe.'
+        },
+        {
+          roundType: 'pigment',
+          prompt: '¿Qué pigmento mineral da este tono?',
+          itemTitle: 'Guarda de Hematita molida',
+          itemSub: 'Mineral rico en óxido de hierro',
+          shape: 'urna',
+          motif: 'steps',
+          palette: 'red',
+          correctBin: 'red',
+          hint: 'La hematita es un mineral de hierro que tiñe la cerámica de Rojo Óxido.'
+        },
+        {
+          roundType: 'pigment',
+          prompt: 'Llevá la pieza al recipiente del color correcto',
+          itemTitle: 'Serpiente en Óxido de Manganeso',
+          itemSub: 'Trazo oscuro sobre fondo claro',
+          shape: 'puco',
+          motif: 'serpent',
+          palette: 'black',
+          correctBin: 'black',
+          hint: 'El óxido de manganeso y el carbón generan el pigmento Negro Mineral.'
+        },
+        {
+          roundType: 'pigment',
+          prompt: 'Identificá el pigmento principal de la vasija',
+          itemTitle: 'Jarro con engobe de arcilla blanca',
+          itemSub: 'Superficie clara lista para decorar',
+          shape: 'jarro',
+          motif: 'dots',
+          palette: 'cream',
+          correctBin: 'cream',
+          hint: 'El baño claro de arcilla fina se denomina Crema / Engobe.'
+        },
+        {
+          roundType: 'pigment',
+          prompt: 'Clasificá el pigmento natural',
+          itemTitle: 'Espirales en tierra ferruginosa',
+          itemSub: 'Tono terracota rojizo intenso',
+          shape: 'jarro',
+          motif: 'spiral',
+          palette: 'red',
+          correctBin: 'red',
+          hint: 'Las tierras con hierro producen el característico Rojo Óxido diaguita.'
+        },
+        {
+          roundType: 'pigment',
+          prompt: '¿A qué estación de pigmento pertenece?',
+          itemTitle: 'Triángulos geométricos oscuros',
+          itemSub: 'Mineral de manganeso triturado',
+          shape: 'urna',
+          motif: 'triangles',
+          palette: 'black',
+          correctBin: 'black',
+          hint: 'Los trazos oscuros bien definidos se lograban con Negro Mineral.'
+        },
+
+        // --- RONDA TIPO FORMAS Y USOS ---
+        {
+          roundType: 'shape',
+          prompt: 'Clasificá la vasija según su forma y función',
+          itemTitle: 'Cuenco abierto hemisférico',
+          itemSub: 'Uso cotidiano y ofrendas de alimentos',
+          shape: 'puco',
+          motif: 'steps',
+          palette: 'tricolor',
+          correctBin: 'puco',
+          hint: 'Es un cuenco bajo y abierto: se llama Puco.'
+        },
+        {
+          roundType: 'shape',
+          prompt: '¿Qué tipo de pieza diaguita es?',
+          itemTitle: 'Vasija con asa puente y pico',
+          itemSub: 'Cuerpo alargado con rasgos de ave',
+          shape: 'jarro',
+          motif: 'waves',
+          palette: 'tricolor',
+          correctBin: 'jarro',
+          hint: 'Su cuerpo asimétrico y asa superior identifican al Jarro Pato.'
+        },
+        {
+          roundType: 'shape',
+          prompt: 'Llevá la pieza a su estación correspondiente',
+          itemTitle: 'Gran vasija alta con dos asas',
+          itemSub: 'Recipiente ceremonial y funerario',
+          shape: 'urna',
+          motif: 'serpent',
+          palette: 'tricolor',
+          correctBin: 'urna',
+          hint: 'Las piezas grandes de cuerpo alto y cuello ancho son Urnas.'
+        },
+        {
+          roundType: 'shape',
+          prompt: 'Identificá esta forma tradicional',
+          itemTitle: 'Escudilla decorada en su interior',
+          itemSub: 'Ideal para servir maíz o algarroba',
+          shape: 'puco',
+          motif: 'triangles',
+          palette: 'tricolor',
+          correctBin: 'puco',
+          hint: 'Los cuencos abiertos para alimentos se conocen como Pucos.'
+        },
+        {
+          roundType: 'shape',
+          prompt: 'Clasificá la pieza alfarera',
+          itemTitle: 'Recipiente zoomorfo ceremonial',
+          itemSub: 'Modelado con cuello y asa arqueada',
+          shape: 'jarro',
+          motif: 'spiral',
+          palette: 'tricolor',
+          correctBin: 'jarro',
+          hint: 'Esta forma emblemática del noroeste argentino es el Jarro Pato.'
+        },
+        {
+          roundType: 'shape',
+          prompt: '¿A qué categoría de vasija corresponde?',
+          itemTitle: 'Vasija monumental con guardas',
+          itemSub: 'Decorada en cuello y cuerpo globular',
+          shape: 'urna',
+          motif: 'steps',
+          palette: 'tricolor',
+          correctBin: 'urna',
+          hint: 'Por su tamaño y cuello ensanchado, corresponde a una Urna.'
+        }
+      ];
+
+      const BINS_BY_TYPE = {
+        pigment: [
+          { id: 'cream', label: 'Crema / Engobe', sub: 'Arcilla blanca', color: '#f3e6cc', text: '#262220' },
+          { id: 'red', label: 'Rojo Óxido', sub: 'Hematita / Hierro', color: '#a63a24', text: '#ffffff' },
+          { id: 'black', label: 'Negro Mineral', sub: 'Manganeso', color: '#262220', text: '#f3e6cc' }
+        ],
+        shape: [
+          { id: 'puco', label: 'Puco', sub: 'Cuenco abierto', color: '#c87d32', text: '#ffffff' },
+          { id: 'jarro', label: 'Jarro Pato', sub: 'Asa puente / ave', color: '#a63a24', text: '#ffffff' },
+          { id: 'urna', label: 'Urna', sub: 'Ceremonial alta', color: '#3b332f', text: '#f3e6cc' }
+        ]
+      };
+
+      // =========================================================
+      // 3. ESTADO DEL JUEGO Y PERSISTENCIA DE CRÉDITOS
+      // =========================================================
+      const state = {
+        screen: 'menu',
+        mode: 'challenge', // 'challenge' | 'practice'
+        queue: [],
+        currentIndex: 0,
+        score: 0,
+        hits: 0,
+        attempts: 0,
+        lives: 3,
+        maxTime: 14,
+        timeLeft: 14,
+        paused: false,
+        hintText: '',
+        feedback: null, // { text, color, timer }
+        factIndex: 0,
+        // Arrastrar pieza
+        piece: {
+          x: 0,
+          y: 0,
+          homeX: 0,
+          homeY: 0,
+          radius: 78,
+          dragging: false,
+          offsetX: 0,
+          offsetY: 0,
+          scale: 1
+        },
+        binsRects: [],
+        hoveredBinId: null,
+        particles: []
+      };
+
+      // Cargar datos escolares desde localStorage
+      const studentData = {
+        name: localStorage.getItem('diaguita_student') || '',
+        course: localStorage.getItem('diaguita_course') || '',
+        school: localStorage.getItem('diaguita_school') || ''
+      };
+
+      function updateStudentBanner() {
+        const banner = document.getElementById('student-banner');
+        const parts = [];
+        if (studentData.name) parts.push(`Alumno/a: <strong>${escapeHtml(studentData.name)}</strong>`);
+        if (studentData.course) parts.push(`Curso: <strong>${escapeHtml(studentData.course)}</strong>`);
+        if (studentData.school) parts.push(`Escuela: <strong>${escapeHtml(studentData.school)}</strong>`);
+        banner.innerHTML = parts.length
+          ? parts.join(' • ')
+          : 'Proyecto Escolar • Tocá "Créditos y Datos del Proyecto" para personalizar los datos del alumno.';
+      }
+
+      function escapeHtml(str) {
+        return str.replace(/[&<>"']/g, m => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[m]));
+      }
+
+      // =========================================================
+      // 4. NAVEGACIÓN Y CONTROLES UI
+      // =========================================================
+      const screenMenu = document.getElementById('screen-menu');
+      const screenGame = document.getElementById('screen-game');
+      const btnHome = document.getElementById('btn-home');
+      const btnSound = document.getElementById('btn-sound');
+
+      function showScreen(name) {
+        state.screen = name;
+        screenMenu.classList.toggle('active', name === 'menu');
+        screenGame.classList.toggle('active', name === 'game');
+        btnHome.style.display = name === 'game' ? 'inline-flex' : 'none';
+        if (name === 'game') {
+          resizeCanvas();
+          resetPieceToHome();
+        }
+      }
+
+      btnSound.addEventListener('click', () => {
+        sound.enabled = !sound.enabled;
+        btnSound.textContent = sound.enabled ? '🔊 Sonido' : '🔇 Silencio';
+        if (sound.enabled) sound.pickup();
+      });
+
+      btnHome.addEventListener('click', () => {
+        state.paused = true;
+        closeAllModals();
+        showScreen('menu');
+      });
+
+      // Modal Créditos
+      const modalCredits = document.getElementById('modal-credits');
+      document.getElementById('btn-open-credits').addEventListener('click', () => {
+        document.getElementById('input-student').value = studentData.name;
+        document.getElementById('input-course').value = studentData.course;
+        document.getElementById('input-school').value = studentData.school;
+        modalCredits.classList.add('active');
+      });
+
+      document.getElementById('btn-save-credits').addEventListener('click', () => {
+        studentData.name = document.getElementById('input-student').value.trim();
+        studentData.course = document.getElementById('input-course').value.trim();
+        studentData.school = document.getElementById('input-school').value.trim();
+        localStorage.setItem('diaguita_student', studentData.name);
+        localStorage.setItem('diaguita_course', studentData.course);
+        localStorage.setItem('diaguita_school', studentData.school);
+        updateStudentBanner();
+        modalCredits.classList.remove('active');
+        sound.pickup();
+      });
+
+      document.getElementById('btn-close-credits').addEventListener('click', () => {
+        modalCredits.classList.remove('active');
+      });
+
+      // Modal Tarjeta Histórica
+      const modalFact = document.getElementById('modal-fact');
+      document.getElementById('btn-continue-fact').addEventListener('click', () => {
+        modalFact.classList.remove('active');
+        state.paused = false;
+        sound.pickup();
+      });
+
+      // Modal Resumen
+      const modalSummary = document.getElementById('modal-summary');
+      document.getElementById('btn-restart-same').addEventListener('click', () => {
+        modalSummary.classList.remove('active');
+        startGame(state.mode);
+      });
+      document.getElementById('btn-switch-mode').addEventListener('click', () => {
+        modalSummary.classList.remove('active');
+        startGame(state.mode === 'challenge' ? 'practice' : 'challenge');
+      });
+      document.getElementById('btn-summary-home').addEventListener('click', () => {
+        modalSummary.classList.remove('active');
+        showScreen('menu');
+      });
+
+      function closeAllModals() {
+        modalCredits.classList.remove('active');
+        modalFact.classList.remove('active');
+        modalSummary.classList.remove('active');
+      }
+
+      document.getElementById('btn-start-challenge').addEventListener('click', () => startGame('challenge'));
+      document.getElementById('btn-start-practice').addEventListener('click', () => startGame('practice'));
+
+      // =========================================================
+      // 5. LÓGICA DE PARTIDA
+      // =========================================================
+      function shuffle(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+
+      function startGame(mode) {
+        sound.init();
+        sound.pickup();
+        state.mode = mode;
+        state.queue = shuffle(CHALLENGES).slice(0, 10);
+        state.currentIndex = 0;
+        state.score = 0;
+        state.hits = 0;
+        state.attempts = 0;
+        state.lives = 3;
+        state.maxTime = 15;
+        state.timeLeft = state.maxTime;
+        state.paused = false;
+        state.hintText = '';
+        state.feedback = null;
+        state.particles = [];
+        closeAllModals();
+        showScreen('game');
+        prepareCurrentItem();
+      }
+
+      function getCurrentItem() {
+        return state.queue[state.currentIndex];
+      }
+
+      function prepareCurrentItem() {
+        state.timeLeft = state.maxTime;
+        state.hintText = '';
+        state.hoveredBinId = null;
+        state.piece.dragging = false;
+        resetPieceToHome();
+      }
+
+      function spawnParticles(x, y, color) {
+        for (let i = 0; i < 20; i++) {
+          const angle = (Math.PI * 2 * i) / 20 + Math.random() * 0.3;
+          const speed = 90 + Math.random() * 160;
+          state.particles.push({
+            x, y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            size: 4 + Math.random() * 5,
+            color,
+            life: 0.65
+          });
+        }
+      }
+
+      function evaluateChoice(binId) {
+        const item = getCurrentItem();
+        if (!item || state.paused) return;
+        state.attempts++;
+
+        if (binId === item.correctBin) {
+          // Acierto
+          sound.success();
+          state.hits++;
+          const timeBonus = state.mode === 'challenge' ? Math.round(state.timeLeft * 10) : 50;
+          state.score += 100 + timeBonus;
+          state.feedback = { text: '¡Excelente clasificación!', color: '#2e6f40', timer: 1.1 };
+          spawnParticles(state.piece.x, state.piece.y, '#c87d32');
+
+          state.currentIndex++;
+
+          if (state.currentIndex >= state.queue.length) {
+            setTimeout(() => endGame(true), 450);
+            return;
+          }
+
+          // Mostrar tarjeta histórica cada 3 aciertos
+          if (state.hits % 3 === 0) {
+            prepareCurrentItem();
+            setTimeout(() => showHistoricalCard(), 420);
+          } else {
+            prepareCurrentItem();
+          }
+        } else {
+          // Error
+          sound.error();
+          if (state.mode === 'practice') {
+            // Modo Práctica: pista educativa sin cortar la partida
+            state.hintText = '💡 Pista: ' + item.hint;
+            state.feedback = { text: 'Intentá de nuevo con la pista', color: '#b85d19', timer: 1.5 };
+            resetPieceToHome();
+          } else {
+            // Modo Desafío: pierde 1 intento de horno
+            state.lives--;
+            state.hintText = '💡 ' + item.hint;
+            state.feedback = { text: 'Pigmento/Categoría incorrecta', color: '#a63a24', timer: 1.4 };
+            if (state.lives <= 0) {
+              setTimeout(() => endGame(false), 500);
+            } else {
+              resetPieceToHome();
+            }
+          }
+        }
+      }
+
+      function showHistoricalCard() {
+        const card = HISTORICAL_CARDS[state.factIndex % HISTORICAL_CARDS.length];
+        state.factIndex++;
+        state.paused = true;
+        sound.fact();
+        document.getElementById('fact-tag').textContent = card.tag;
+        document.getElementById('fact-title').textContent = card.title;
+        document.getElementById('fact-body').textContent = card.body;
+        modalFact.classList.add('active');
+      }
+
+      function endGame(completed) {
+        state.paused = true;
+        const accuracy = state.attempts > 0 ? Math.round((state.hits / state.attempts) * 100) : 100;
+        document.getElementById('summary-tag').textContent =
+          state.mode === 'practice' ? 'Modo Clase / Práctica' : 'Modo Desafío';
+        document.getElementById('summary-title').textContent =
+          completed ? '¡Taller Diaguita Completado!' : 'Se enfriaron los hornos del taller';
+        document.getElementById('summary-text').textContent =
+          completed
+            ? 'Clasificaste las vasijas, pigmentos naturales y motivos geométricos del noroeste argentino.'
+            : 'Repasá los pigmentos minerales (crema, rojo óxido y negro) y las formas tradicionales para volver a intentarlo.';
+        document.getElementById('stat-hits').textContent = `${state.hits}/${state.queue.length}`;
+        document.getElementById('stat-score').textContent = state.score;
+        document.getElementById('stat-accuracy').textContent = `${accuracy}%`;
+        modalSummary.classList.add('active');
+      }
+
+      // =========================================================
+      // 6. CANVAS 2D Y DIBUJO PROCEDURAL DE CERÁMICA DIAGUITA
+      // =========================================================
+      const canvas = document.getElementById('gameCanvas');
+      const ctx = canvas.getContext('2d');
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+
+      function resizeCanvas() {
+        const rect = screenGame.getBoundingClientRect();
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = rect.width;
+        height = rect.height;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        computeLayout();
+      }
+
+      window.addEventListener('resize', () => {
+        if (state.screen === 'game') {
+          resizeCanvas();
+          if (!state.piece.dragging) resetPieceToHome();
+        }
+      });
+
+      function computeLayout() {
+        const isLandscape = width > height * 1.15;
+        const topHudH = 68;
+        const margin = Math.max(12, width * 0.03);
+
+        if (isLandscape && width >= 680) {
+          // Estaciones a la derecha, mesa de trabajo a la izquierda
+          const binAreaW = Math.min(280, width * 0.36);
+          const binGap = 12;
+          const availH = height - topHudH - margin * 2;
+          const binH = (availH - binGap * 2) / 3;
+          const binX = width - binAreaW - margin;
+
+          state.binsRects = [0, 1, 2].map(i => ({
+            x: binX,
+            y: topHudH + margin + i * (binH + binGap),
+            w: binAreaW,
+            h: binH
+          }));
+
+          state.piece.homeX = (binX) * 0.5;
+          state.piece.homeY = topHudH + (height - topHudH) * 0.52;
+          state.piece.radius = Math.min(88, Math.min(binX, availH) * 0.24);
+        } else {
+          // Diseño vertical móvil: mesa arriba/centro, 3 estaciones grandes abajo
+          const binH = Math.min(118, Math.max(88, height * 0.17));
+          const binGap = 10;
+          const totalW = width - margin * 2;
+          const binW = (totalW - binGap * 2) / 3;
+          const binY = height - binH - margin;
+
+          state.binsRects = [0, 1, 2].map(i => ({
+            x: margin + i * (binW + binGap),
+            y: binY,
+            w: binW,
+            h: binH
+          }));
+
+          state.piece.homeX = width * 0.5;
+          state.piece.homeY = topHudH + (binY - topHudH) * 0.48;
+          state.piece.radius = Math.min(82, Math.min(width * 0.23, (binY - topHudH) * 0.25));
+        }
+      }
+
+      function resetPieceToHome() {
+        computeLayout();
+        state.piece.x = state.piece.homeX;
+        state.piece.y = state.piece.homeY;
+        state.piece.dragging = false;
+      }
+
+      // Dibujo procedural de la vasija diaguita
+      function drawDiaguitaVessel(ctx, x, y, r, item) {
+        ctx.save();
+        ctx.translate(x, y);
+
+        // Sombra suave sobre la mesa del taller
+        ctx.fillStyle = 'rgba(38, 34, 32, 0.18)';
+        ctx.beginPath();
+        ctx.ellipse(0, r * 0.72, r * 0.75, r * 0.18, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Colores según el ítem
+        let baseFill = '#f3e6cc';
+        let primaryStroke = '#262220';
+        let accentFill = '#a63a24';
+
+        if (item.palette === 'cream') {
+          baseFill = '#f5ead4';
+          primaryStroke = '#9c8365';
+          accentFill = '#e2cfa8';
+        } else if (item.palette === 'red') {
+          baseFill = '#f0dec0';
+          primaryStroke = '#a63a24';
+          accentFill = '#a63a24';
+        } else if (item.palette === 'black') {
+          baseFill = '#edd9b8';
+          primaryStroke = '#231f1e';
+          accentFill = '#231f1e';
+        } else {
+          // Tricolor clásico (Crema + Rojo + Negro)
+          baseFill = '#f3e6cc';
+          primaryStroke = '#231f1e';
+          accentFill = '#a63a24';
+        }
+
+        ctx.lineWidth = 3.2;
+        ctx.strokeStyle = '#2b2420';
+        ctx.fillStyle = baseFill;
+
+        if (item.shape === 'puco') {
+          // Cuenco abierto (Puco)
+          ctx.beginPath();
+          ctx.moveTo(-r * 0.85, -r * 0.22);
+          ctx.bezierCurveTo(-r * 0.82, r * 0.55, -r * 0.35, r * 0.68, 0, r * 0.68);
+          ctx.bezierCurveTo(r * 0.35, r * 0.68, r * 0.82, r * 0.55, r * 0.85, -r * 0.22);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          // Boca elíptica
+          ctx.fillStyle = '#d9c29c';
+          ctx.beginPath();
+          ctx.ellipse(0, -r * 0.22, r * 0.85, r * 0.17, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          drawMotifBand(ctx, 0, r * 0.22, r * 0.68, item.motif, primaryStroke, accentFill);
+        } else if (item.shape === 'jarro') {
+          // Jarro Pato: cuerpo globular + pico + cabeza/cola + asa puente
+          // Asa puente
+          ctx.strokeStyle = accentFill;
+          ctx.lineWidth = 7;
+          ctx.beginPath();
+          ctx.moveTo(-r * 0.28, -r * 0.28);
+          ctx.quadraticCurveTo(0, -r * 0.82, r * 0.36, -r * 0.22);
+          ctx.stroke();
+
+          ctx.strokeStyle = '#2b2420';
+          ctx.lineWidth = 3;
+
+          // Cuerpo
+          ctx.fillStyle = baseFill;
+          ctx.beginPath();
+          ctx.moveTo(-r * 0.78, 0);
+          ctx.quadraticCurveTo(-r * 0.72, r * 0.65, 0, r * 0.65);
+          ctx.quadraticCurveTo(r * 0.78, r * 0.65, r * 0.85, r * 0.08);
+          ctx.quadraticCurveTo(r * 0.96, -r * 0.18, r * 0.65, -r * 0.24);
+          ctx.quadraticCurveTo(r * 0.35, -r * 0.26, r * 0.12, -r * 0.12);
+          ctx.lineTo(-r * 0.15, -r * 0.14);
+          ctx.lineTo(-r * 0.18, -r * 0.48);
+          ctx.lineTo(-r * 0.46, -r * 0.48);
+          ctx.lineTo(-r * 0.44, -r * 0.12);
+          ctx.quadraticCurveTo(-r * 0.68, -r * 0.1, -r * 0.78, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          // Ojo estilizado en el extremo zoomorfo
+          ctx.fillStyle = primaryStroke;
+          ctx.beginPath();
+          ctx.arc(r * 0.64, -r * 0.06, 4.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          drawMotifBand(ctx, 0, r * 0.28, r * 0.62, item.motif, primaryStroke, accentFill);
+        } else {
+          // Urna ceremonial alta con asas laterales
+          // Asas
+          ctx.strokeStyle = '#2b2420';
+          ctx.lineWidth = 6;
+          ctx.beginPath();
+          ctx.arc(-r * 0.62, r * 0.18, r * 0.18, Math.PI * 0.5, Math.PI * 1.5);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(r * 0.62, r * 0.18, r * 0.18, -Math.PI * 0.5, Math.PI * 0.5);
+          ctx.stroke();
+
+          // Silueta de urna
+          ctx.lineWidth = 3.2;
+          ctx.fillStyle = baseFill;
+          ctx.beginPath();
+          ctx.moveTo(-r * 0.54, -r * 0.72);
+          ctx.lineTo(r * 0.54, -r * 0.72);
+          ctx.lineTo(r * 0.42, -r * 0.32);
+          ctx.bezierCurveTo(r * 0.75, -r * 0.05, r * 0.68, r * 0.55, r * 0.32, r * 0.72);
+          ctx.lineTo(-r * 0.32, r * 0.72);
+          ctx.bezierCurveTo(-r * 0.68, r * 0.55, -r * 0.75, -r * 0.05, -r * 0.42, -r * 0.32);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+
+          // Guarda superior en el cuello
+          drawMotifBand(ctx, 0, -r * 0.5, r * 0.38, 'triangles', accentFill, primaryStroke);
+          // Guarda central en el cuerpo
+          drawMotifBand(ctx, 0, r * 0.2, r * 0.54, item.motif, primaryStroke, accentFill);
+        }
+
+        ctx.restore();
+      }
+
+      function drawMotifBand(ctx, cx, cy, halfW, motif, strokeCol, fillCol) {
+        ctx.save();
+        ctx.strokeStyle = strokeCol;
+        ctx.fillStyle = fillCol;
+        ctx.lineWidth = 2.6;
+
+        // Líneas límite de guarda
+        ctx.beginPath();
+        ctx.moveTo(cx - halfW, cy - 14);
+        ctx.lineTo(cx + halfW, cy - 14);
+        ctx.moveTo(cx - halfW, cy + 14);
+        ctx.lineTo(cx + halfW, cy + 14);
+        ctx.stroke();
+
+        const steps = 4;
+        const segW = (halfW * 2) / steps;
+
+        if (motif === 'steps') {
+          // Guarda escalonada diaguita
+          ctx.beginPath();
+          for (let i = 0; i < steps; i++) {
+            const sx = cx - halfW + i * segW;
+            ctx.moveTo(sx, cy + 10);
+            ctx.lineTo(sx, cy);
+            ctx.lineTo(sx + segW * 0.5, cy);
+            ctx.lineTo(sx + segW * 0.5, cy - 10);
+            ctx.lineTo(sx + segW, cy - 10);
+          }
+          ctx.stroke();
+        } else if (motif === 'serpent') {
+          // Serpiente ondulada (amaro)
+          ctx.beginPath();
+          ctx.moveTo(cx - halfW, cy);
+          for (let i = 0; i < steps; i++) {
+            const sx = cx - halfW + i * segW;
+            ctx.quadraticCurveTo(sx + segW * 0.25, cy - 13, sx + segW * 0.5, cy);
+            ctx.quadraticCurveTo(sx + segW * 0.75, cy + 13, sx + segW, cy);
+          }
+          ctx.stroke();
+        } else if (motif === 'triangles') {
+          // Triángulos rellenos
+          for (let i = 0; i < steps; i++) {
+            const sx = cx - halfW + i * segW;
+            ctx.beginPath();
+            ctx.moveTo(sx + 2, cy + 11);
+            ctx.lineTo(sx + segW * 0.5, cy - 10);
+            ctx.lineTo(sx + segW - 2, cy + 11);
+            ctx.closePath();
+            ctx.fill();
+          }
+        } else if (motif === 'spiral') {
+          // Espirales geométricas
+          for (let i = 0; i < steps; i++) {
+            const mx = cx - halfW + (i + 0.5) * segW;
+            ctx.beginPath();
+            ctx.arc(mx, cy, 8, 0, Math.PI * 1.65);
+            ctx.stroke();
+          }
+        } else {
+          // Puntos y ondas suaves
+          for (let i = 0; i < steps; i++) {
+            const mx = cx - halfW + (i + 0.5) * segW;
+            ctx.beginPath();
+            ctx.arc(mx, cy, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        ctx.restore();
+      }
+
+      function drawRoundedRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      }
+
+      // =========================================================
+      // 7. RENDERIZADO PRINCIPAL EN BUCLE (60 FPS)
+      // =========================================================
+      let lastTime = performance.now();
+
+      function gameLoop(now) {
+        const dt = Math.min((now - lastTime) / 1000, 0.05);
+        lastTime = now;
+
+        if (state.screen === 'game') {
+          update(dt);
+          render();
+        }
+        requestAnimationFrame(gameLoop);
+      }
+
+      function update(dt) {
+        if (!state.paused && state.mode === 'challenge') {
+          state.timeLeft -= dt;
+          if (state.timeLeft <= 0) {
+            state.timeLeft = 0;
+            sound.error();
+            state.lives--;
+            state.attempts++;
+            if (state.lives <= 0) {
+              endGame(false);
+            } else {
+              state.feedback = { text: '¡Se acabó el tiempo de cocción!', color: '#a63a24', timer: 1.3 };
+              prepareCurrentItem();
+            }
+          }
+        }
+
+        if (state.feedback) {
+          state.feedback.timer -= dt;
+          if (state.feedback.timer <= 0) state.feedback = null;
+        }
+
+        // Partículas
+        for (let i = state.particles.length - 1; i >= 0; i--) {
+          const p = state.particles[i];
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.life -= dt;
+          if (p.life <= 0) state.particles.splice(i, 1);
+        }
+      }
+
+      function render() {
+        const item = getCurrentItem();
+        if (!item) return;
+
+        // Fondo textura taller de arcilla
+        ctx.fillStyle = '#efe3cf';
+        ctx.fillRect(0, 0, width, height);
+
+        // Guarda decorativa sutil en el fondo
+        ctx.strokeStyle = 'rgba(166, 58, 36, 0.08)';
+        ctx.lineWidth = 2;
+        for (let gx = 0; gx < width; gx += 48) {
+          ctx.strokeRect(gx + 6, 74, 36, 12);
+        }
+
+        // HUD Superior dentro del canvas
+        ctx.fillStyle = '#fbf5ea';
+        ctx.fillRect(0, 0, width, 64);
+        ctx.strokeStyle = '#cbb697';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, 64);
+        ctx.lineTo(width, 64);
+        ctx.stroke();
+
+        ctx.fillStyle = '#262220';
+        ctx.font = 'bold 14px system-ui, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Pieza ${state.currentIndex + 1} de ${state.queue.length}`, 14, 24);
+
+        ctx.fillStyle = '#a63a24';
+        ctx.font = 'bold 15px system-ui, sans-serif';
+        ctx.fillText(`Puntos: ${state.score}`, 14, 48);
+
+        // Indicador derecho: Vidas/Tiempo en Desafío o Etiqueta en Práctica
+        ctx.textAlign = 'right';
+        if (state.mode === 'challenge') {
+          const hearts = '🔥'.repeat(Math.max(0, state.lives)) + '⚪'.repeat(Math.max(0, 3 - state.lives));
+          ctx.fillStyle = '#262220';
+          ctx.font = 'bold 14px system-ui, sans-serif';
+          ctx.fillText(`Hornos: ${hearts}`, width - 14, 24);
+
+          // Barra de tiempo
+          const barW = Math.min(140, width * 0.34);
+          const barX = width - 14 - barW;
+          ctx.fillStyle = '#dfd0b8';
+          drawRoundedRect(ctx, barX, 34, barW, 14, 7);
+          ctx.fill();
+
+          const ratio = Math.max(0, state.timeLeft / state.maxTime);
+          ctx.fillStyle = ratio > 0.35 ? '#2e6f40' : '#a63a24';
+          drawRoundedRect(ctx, barX, 34, barW * ratio, 14, 7);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = '#2e6f40';
+          ctx.font = 'bold 13px system-ui, sans-serif';
+          ctx.fillText('MODO CLASE / PRÁCTICA', width - 14, 26);
+          ctx.fillStyle = '#5e5149';
+          ctx.font = '12px system-ui, sans-serif';
+          ctx.fillText('Sin límite de tiempo', width - 14, 46);
+        }
+
+        // Consigna actual
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#7d2817';
+        ctx.font = 'bold 15px system-ui, sans-serif';
+        ctx.fillText(item.prompt, state.piece.homeX, 90);
+
+        // Mesa circular del alfarero
+        ctx.fillStyle = '#e2d1b5';
+        ctx.beginPath();
+        ctx.arc(state.piece.homeX, state.piece.homeY, state.piece.radius * 1.15, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#bda582';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Estaciones / Recipientes destino
+        const bins = BINS_BY_TYPE[item.roundType];
+        bins.forEach((bin, idx) => {
+          const rect = state.binsRects[idx];
+          if (!rect) return;
+          const isHovered = state.hoveredBinId === bin.id;
+
+          ctx.save();
+          if (isHovered) {
+            ctx.translate(rect.x + rect.w / 2, rect.y + rect.h / 2);
+            ctx.scale(1.04, 1.04);
+            ctx.translate(-(rect.x + rect.w / 2), -(rect.y + rect.h / 2));
+          }
+
+          ctx.fillStyle = bin.color;
+          drawRoundedRect(ctx, rect.x, rect.y, rect.w, rect.h, 14);
+          ctx.fill();
+
+          ctx.lineWidth = isHovered ? 4 : 2.5;
+          ctx.strokeStyle = isHovered ? '#2e6f40' : '#262220';
+          ctx.stroke();
+
+          ctx.fillStyle = bin.text;
+          ctx.textAlign = 'center';
+          ctx.font = 'bold 14px system-ui, sans-serif';
+          ctx.fillText(bin.label, rect.x + rect.w / 2, rect.y + rect.h * 0.44);
+
+          ctx.font = '11.5px system-ui, sans-serif';
+          ctx.fillText(bin.sub, rect.x + rect.w / 2, rect.y + rect.h * 0.68);
+
+          ctx.font = 'bold 10.5px system-ui, sans-serif';
+          ctx.globalAlpha = 0.82;
+          ctx.fillText('Arrastrá o tocá', rect.x + rect.w / 2, rect.y + rect.h * 0.88);
+          ctx.restore();
+        });
+
+        // Etiqueta descriptiva de la pieza (debajo de la mesa)
+        const labelY = state.piece.homeY + state.piece.radius * 1.25;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#262220';
+        ctx.font = 'bold 15px system-ui, sans-serif';
+        ctx.fillText(item.itemTitle, state.piece.homeX, labelY);
+
+        ctx.fillStyle = '#5a4d45';
+        ctx.font = '12.5px system-ui, sans-serif';
+        ctx.fillText(item.itemSub, state.piece.homeX, labelY + 18);
+
+        // Pista educativa (si hubo error en Modo Práctica o Desafío)
+        if (state.hintText) {
+          ctx.fillStyle = '#fff5e4';
+          const boxW = Math.min(width - 28, 460);
+          const boxX = state.piece.homeX - boxW / 2;
+          const boxY = labelY + 28;
+          drawRoundedRect(ctx, boxX, boxY, boxW, 34, 8);
+          ctx.fill();
+          ctx.strokeStyle = '#c87d32';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.fillStyle = '#7d2817';
+          ctx.font = 'bold 12px system-ui, sans-serif';
+          ctx.fillText(state.hintText, state.piece.homeX, boxY + 21, boxW - 16);
+        }
+
+        // Mensaje flotante de retroalimentación
+        if (state.feedback) {
+          ctx.fillStyle = state.feedback.color;
+          ctx.font = 'bold 15px system-ui, sans-serif';
+          ctx.fillText(state.feedback.text, state.piece.homeX, 112);
+        }
+
+        // Dibujar pieza interactiva encima de todo
+        drawDiaguitaVessel(ctx, state.piece.x, state.piece.y, state.piece.radius, item);
+
+        // Dibujar partículas
+        state.particles.forEach(p => {
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = Math.max(0, p.life / 0.65);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+      }
+
+      // =========================================================
+      // 8. CONTROL TÁCTIL Y MOUSE (ARRASTRAR O TOCAR ESTACIÓN)
+      // =========================================================
+      function getPointerPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        };
+      }
+
+      function findBinAt(px, py) {
+        const item = getCurrentItem();
+        if (!item) return null;
+        const bins = BINS_BY_TYPE[item.roundType];
+        for (let i = 0; i < state.binsRects.length; i++) {
+          const r = state.binsRects[i];
+          if (px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h) {
+            return bins[i];
+          }
+        }
+        return null;
+      }
+
+      canvas.addEventListener('pointerdown', (e) => {
+        if (state.paused || state.screen !== 'game') return;
+        e.preventDefault();
+        canvas.setPointerCapture(e.pointerId);
+        const pos = getPointerPos(e);
+
+        // 1. ¿Tocó directamente la vasija para arrastrarla?
+        const dist = Math.hypot(pos.x - state.piece.x, pos.y - state.piece.y);
+        if (dist <= state.piece.radius * 1.15) {
+          state.piece.dragging = true;
+          state.piece.offsetX = pos.x - state.piece.x;
+          state.piece.offsetY = pos.y - state.piece.y;
+          sound.pickup();
+          return;
+        }
+
+        // 2. ¿Tocó directamente una de las estaciones destino? (Accesibilidad rápida táctil/mouse)
+        const clickedBin = findBinAt(pos.x, pos.y);
+        if (clickedBin) {
+          evaluateChoice(clickedBin.id);
+        }
+      });
+
+      canvas.addEventListener('pointermove', (e) => {
+        if (!state.piece.dragging || state.paused) return;
+        e.preventDefault();
+        const pos = getPointerPos(e);
+        state.piece.x = pos.x - state.piece.offsetX;
+        state.piece.y = pos.y - state.piece.offsetY;
+
+        const hovered = findBinAt(state.piece.x, state.piece.y) || findBinAt(pos.x, pos.y);
+        state.hoveredBinId = hovered ? hovered.id : null;
+      });
+
+      function handlePointerUp(e) {
+        if (!state.piece.dragging) return;
+        e.preventDefault();
+        const pos = getPointerPos(e);
+        state.piece.dragging = false;
+
+        const targetBin = findBinAt(state.piece.x, state.piece.y) || findBinAt(pos.x, pos.y);
+        state.hoveredBinId = null;
+
+        if (targetBin) {
+          evaluateChoice(targetBin.id);
+        } else {
+          resetPieceToHome();
+        }
+      }
+
+      canvas.addEventListener('pointerup', handlePointerUp);
+      canvas.addEventListener('pointercancel', handlePointerUp);
+
+      // Inicialización
+      updateStudentBanner();
+      requestAnimationFrame(gameLoop);
+    })();
+  </script>
+</body>
+</html>
